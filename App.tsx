@@ -4,56 +4,41 @@ import { useEffect, useState } from 'react';
 import AddTask from './components/AddTask';
 import TaskItem from './components/TaskItem';
 
-const STORAGE_KEY = 'TASK_ITEMS';
+import { useTodos } from "./hooks/useTodos";
+
 
 export default function App() {
-  type Task = {
-    text: string;
-    done: boolean;
-  };
-  const [items, setItems] = useState<Task[]>([]);
-  useEffect(() => {
-    (async () => {
-      try {
-        const json = await AsyncStorage.getItem(STORAGE_KEY);
-        if (json) {
-          const parsed = JSON.parse(json);
-          if (Array.isArray(parsed)) {
-            setItems(parsed);
-          }
-        }
-      } catch (e) {
-      }
-    })();
-  }, []);
-useEffect(() => {
-AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}, [items]);
-
-function toggleTask(index: number) {  //katsotaan mikä tehtävä indexin peruusteella
-  const updated = [...items];
-  updated[index].done = !updated[index].done; //vaihdetaan tehtävä done tai !done
-  setItems(updated);  //päivittetään
-}
-function addTask(text: string) {
-  setItems([...items, { text, done: false }]);
-}
-
+  const {
+    todos,
+    addTodo,
+    toggleTodo,
+    removeTodo,
+  } = useTodos();
+  
   return (
-    <View style={styles.container}>
+ <View style={styles.container}>
       <Text style={styles.headline}>Todo List</Text>
 
-      <AddTask onAdd={addTask} />  { /*adddtask kutsuu onadd kun painetaan save*/}
-      <FlatList 
-          data={items}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={({ item, index }) => 
-            (
-              <TaskItem task={item} onToggle={() => toggleTask(index)} />
-            )
-          }
+      <AddTask onAdd={addTodo} />
+
+      <FlatList
+        data={todos}
+        keyExtractor={(item) =>
+          item.id.toString()
+        }
+        renderItem={({ item }) => (
+          <TaskItem
+            text={item.text}
+            done={item.done}
+            onToggle={() =>
+              toggleTodo(item.id)
+            }
+            onRemove={() =>
+              removeTodo(item.id)
+            }
+          />
+        )}
       />
-          
     </View>
   );
 }

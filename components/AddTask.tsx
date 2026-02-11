@@ -16,12 +16,12 @@ export default function AddTask({ onAdd }: Props) {
    <View style={styles.row}>
         <TextInput //TASKIN SYÖTTÖ
          style={styles.input}
-         placeholder="Enter task" 
+         placeholder="Add a new task" 
          value={text} 
          onChangeText={setText} />
    
-         <Pressable onPress={handleAdd}>
-         <Text style={styles.buttonText}>Save</Text>
+         <Pressable style={styles.button} onPress={handleAdd}>
+         <Text style={styles.buttonText}>Add</Text>
        </Pressable>
    </View>
   );
@@ -37,8 +37,13 @@ const styles = StyleSheet.create({
   input: {
   width: '80%',
   },
+    button: {
+    backgroundColor: "green",
+    padding: 10,
+    borderRadius: 4,
+  },
   buttonText: {
-  color: 'blue',
+    color: "white",
   fontSize: 20,
   },
 });
